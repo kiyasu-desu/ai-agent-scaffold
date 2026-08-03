@@ -66,6 +66,7 @@ public class AiAgentConfigTableVO {
                 public static class StdioServerParameters {
                     private String name;
                     private Integer requestTimeout = 3000;
+                    private ServerParameters serverParameters;
 
                     @Data
                     public static class ServerParameters {
