@@ -1,6 +1,8 @@
 package com.kiyasu.ai.domain.agent.service.armory.node.workflow;
 
 import cn.bugstack.wrench.design.framework.tree.StrategyHandler;
+import com.google.adk.agents.BaseAgent;
+import com.google.adk.agents.LoopAgent;
 import com.kiyasu.ai.domain.agent.model.entity.ArmoryCommandEntity;
 import com.kiyasu.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.kiyasu.ai.domain.agent.model.valobj.AiAgentRegisterVO;
@@ -17,7 +19,25 @@ import java.util.List;
 public class LoopAgentNode extends AbstractArmorySupport {
     @Override
     protected AiAgentRegisterVO doApply(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
-        return null;
+        log.info("Ai Agent 装配操作 - LoopAgentNode");
+
+        List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = dynamicContext.getAgentWorkflows();
+        AiAgentConfigTableVO.Module.AgentWorkflow agentWorkflow = agentWorkflows.remove(0);
+
+        List<String> subAgentNames = agentWorkflow.getSubAgent();
+        List<BaseAgent> subAgents = dynamicContext.queryAgentList(subAgentNames);
+
+        LoopAgent loopAgent = LoopAgent.builder()
+                .name(agentWorkflow.getName())
+                .description(agentWorkflow.getDescription())
+                .subAgents(subAgents)
+                .maxIterations(agentWorkflow.getMaxIterations())
+                .build();
+
+        dynamicContext.getAgentGroup().put(agentWorkflow.getName(), loopAgent);
+
+
+        return router(requestParameter, dynamicContext);
     }
 
     @Override
