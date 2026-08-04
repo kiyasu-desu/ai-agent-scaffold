@@ -1,5 +1,6 @@
 package com.kiyasu.ai.domain.agent.service.armory.factory;
 
+import com.google.adk.agents.BaseAgent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +30,11 @@ public class DefaultArmoryFactory {
          * LLM ChatModel
          */
         private ChatModel chatModel;
+
+        /**
+         * 智能体配置组
+         */
+        private Map<String, BaseAgent> agentGroup = new HashMap<>();
 
         private Map<String, Object> dataObject = new HashMap<>();
 
