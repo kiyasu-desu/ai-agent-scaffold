@@ -1,6 +1,7 @@
 package com.kiyasu.ai.domain.agent.service.armory.factory;
 
 import com.google.adk.agents.BaseAgent;
+import com.google.adk.agents.SequentialAgent;
 import com.kiyasu.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,11 @@ public class DefaultArmoryFactory {
          * LLM ChatModel
          */
         private ChatModel chatModel;
+
+        /**
+         * 当作最后一个智能体节点
+         */
+        private SequentialAgent sequentialAgent;
 
         /**
          * 智能体配置组
