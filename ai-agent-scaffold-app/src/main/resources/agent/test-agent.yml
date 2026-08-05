@@ -12,7 +12,7 @@ ai:
             ai-api:
               base-url: https://api.deepseek.com
               api-key: sk-7693119c158e43e390578d36a9526a94
-              completions-path: v1/completions
+              completions-path: v1/chat/completions
               embeddings-path: v1/embeddings
             chat-model:
               model: deepseek-v4-flash
@@ -21,11 +21,6 @@ ai:
                     name: baidu-search
                     base-uri: https://appbuilder.baidu.com/v2/ai_search/mcp/
                     sse-endpoint: sse?api_key=bce-v3/ALTAK-4obpT3OGHUjAljfHOePNB/6dd2402bbbf0823fc50dd7b87cca45a765837d6e
-                    request-timeout: 5000
-                - sse:
-                    name: baidu-map
-                    base-uri: https://mcp.map.baidu.com/
-                    sse-endpoint: sse?ak=tV0NsP4Gmj8IL7mhvyjVZ7c6
                     request-timeout: 5000
             agents:
               - name: CodeWriterAgent

@@ -13,12 +13,14 @@ import com.kiyasu.ai.domain.agent.service.armory.node.RunnerNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Slf4j
 @Service
 public class SequentialAgentNode extends AbstractArmorySupport {
 
+    @Resource
     private RunnerNode runnerNode;
 
     @Override
@@ -28,7 +30,7 @@ public class SequentialAgentNode extends AbstractArmorySupport {
         List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = dynamicContext.getAgentWorkflows();
         AiAgentConfigTableVO.Module.AgentWorkflow agentWorkflow = agentWorkflows.remove(0);
 
-        List<String> subAgentNames = agentWorkflow.getSubAgent();
+        List<String> subAgentNames = agentWorkflow.getSubAgents();
         List<BaseAgent> subAgents = dynamicContext.queryAgentList(subAgentNames);
 
         SequentialAgent sequentialAgent = SequentialAgent.builder()

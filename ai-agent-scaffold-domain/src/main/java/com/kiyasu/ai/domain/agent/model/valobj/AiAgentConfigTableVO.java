@@ -92,7 +92,7 @@ public class AiAgentConfigTableVO {
         public static class AgentWorkflow {
             private String type;
             private String name;
-            private List<String> subAgent;
+            private List<String> subAgents;
             private String description;
             private Integer maxIterations = 3;
         }
