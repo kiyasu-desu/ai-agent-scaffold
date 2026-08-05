@@ -51,4 +51,24 @@ public class AiAgentAutoConfigTest {
 
     }
 
+    @Test
+    public void weather_agent() throws InterruptedException {
+        AiAgentRegisterVO aiAgentRegisterVO = applicationContext.getBean("100002", AiAgentRegisterVO.class);
+
+        String appName = aiAgentRegisterVO.getAppName();
+        InMemoryRunner runner = aiAgentRegisterVO.getRunner();
+
+        Session session = runner.sessionService()
+                .createSession(appName, "kiyasu")
+                .blockingGet();
+
+        Content userMsg = Content.fromParts(Part.fromText("深圳明天会下雨吗"));
+        Flowable<Event> events = runner.runAsync("kiyasu", session.id(), userMsg);
+
+        List<String> outputs = new ArrayList<>();
+        events.blockingForEach(event -> outputs.add(event.stringifyContent()));
+
+        log.info("测试结果：{}", JSON.toJSONString(outputs));
+    }
+
 }
