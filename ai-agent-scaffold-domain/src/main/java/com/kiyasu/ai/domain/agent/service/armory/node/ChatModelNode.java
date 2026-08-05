@@ -145,6 +145,7 @@ public class ChatModelNode extends AbstractArmorySupport {
 
             log.info("tool stdio mcp initialize {}", initialize);
 
+            return mcpSyncClient;
         }
 
         throw new RuntimeException("tool mcp sse and stdio is null!");
