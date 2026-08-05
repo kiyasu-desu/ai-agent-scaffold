@@ -1,8 +1,12 @@
 package com.kiyasu.ai.domain.agent.service.armory.factory;
 
+import cn.bugstack.wrench.design.framework.tree.StrategyHandler;
 import com.google.adk.agents.BaseAgent;
 import com.google.adk.agents.SequentialAgent;
+import com.kiyasu.ai.domain.agent.model.entity.ArmoryCommandEntity;
 import com.kiyasu.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
+import com.kiyasu.ai.domain.agent.model.valobj.AiAgentRegisterVO;
+import com.kiyasu.ai.domain.agent.service.armory.node.RootNode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,10 +15,18 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 @Service
 public class DefaultArmoryFactory {
+
+    @Resource
+    private RootNode rootNode;
+
+    public StrategyHandler<ArmoryCommandEntity, DynamicContext, AiAgentRegisterVO> armoryStrategyHandler() {
+        return rootNode;
+    }
 
     @Data
     @Builder

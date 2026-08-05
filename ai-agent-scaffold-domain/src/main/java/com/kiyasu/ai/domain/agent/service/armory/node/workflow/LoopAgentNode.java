@@ -24,7 +24,7 @@ public class LoopAgentNode extends AbstractArmorySupport {
         List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = dynamicContext.getAgentWorkflows();
         AiAgentConfigTableVO.Module.AgentWorkflow agentWorkflow = agentWorkflows.remove(0);
 
-        List<String> subAgentNames = agentWorkflow.getSubAgent();
+        List<String> subAgentNames = agentWorkflow.getSubAgents();
         List<BaseAgent> subAgents = dynamicContext.queryAgentList(subAgentNames);
 
         LoopAgent loopAgent = LoopAgent.builder()
