@@ -36,9 +36,5 @@ ai:
                   4. If the tool call fails, tell the user politely that weather data cannot be retrieved.
                   Output only the final weather summary.
                 output-key: weather_info
-            agent-workflows:
-              - type: sequential
-                name: WeatherPipelineAgent
-                description: Queries current weather for the user-specified city.
-                sub-agents:
-                  - WeatherAgent
+            runner:
+              agent-name: WeatherAgent
