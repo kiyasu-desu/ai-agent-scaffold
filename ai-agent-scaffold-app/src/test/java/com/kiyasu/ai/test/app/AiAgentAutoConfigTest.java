@@ -52,7 +52,7 @@ public class AiAgentAutoConfigTest {
     }
 
     @Test
-    public void weather_agent() throws InterruptedException {
+    public void weather_agent() {
         AiAgentRegisterVO aiAgentRegisterVO = applicationContext.getBean("100002", AiAgentRegisterVO.class);
 
         String appName = aiAgentRegisterVO.getAppName();
@@ -62,7 +62,7 @@ public class AiAgentAutoConfigTest {
                 .createSession(appName, "kiyasu")
                 .blockingGet();
 
-        Content userMsg = Content.fromParts(Part.fromText("深圳明天会下雨吗"));
+        Content userMsg = Content.fromParts(Part.fromText("深圳市龙岗区等会会下雨吗"));
         Flowable<Event> events = runner.runAsync("kiyasu", session.id(), userMsg);
 
         List<String> outputs = new ArrayList<>();

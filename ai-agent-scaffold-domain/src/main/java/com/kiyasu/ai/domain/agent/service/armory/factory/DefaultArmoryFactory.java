@@ -45,11 +45,6 @@ public class DefaultArmoryFactory {
         private ChatModel chatModel;
 
         /**
-         * 当作最后一个智能体节点
-         */
-        private SequentialAgent sequentialAgent;
-
-        /**
          * 智能体配置组
          */
         private Map<String, BaseAgent> agentGroup = new HashMap<>();
