@@ -47,8 +47,6 @@ public class AiAgentAutoConfigTest {
 
         log.info("测试结果：{}", JSON.toJSONString(outputs));
 
-        new CountDownLatch(1).await();
-
     }
 
     @Test
@@ -69,6 +67,27 @@ public class AiAgentAutoConfigTest {
         events.blockingForEach(event -> outputs.add(event.stringifyContent()));
 
         log.info("测试结果：{}", JSON.toJSONString(outputs));
+    }
+
+    @Test
+    public void test_agent03() throws InterruptedException {
+        AiAgentRegisterVO aiAgentRegisterVO = applicationContext.getBean("100003", AiAgentRegisterVO.class);
+
+        String appName = aiAgentRegisterVO.getAppName();
+        InMemoryRunner runner = aiAgentRegisterVO.getRunner();
+
+        Session session = runner.sessionService()
+                .createSession(appName, "kiyasu")
+                .blockingGet();
+
+        Content userMessage = Content.fromParts(Part.fromText("你具备哪些能力"));
+        Flowable<Event> events = runner.runAsync("kiyasu", session.id(), userMessage);
+
+        List<String> outputs = new ArrayList<>();
+        events.blockingForEach(event -> outputs.add(event.stringifyContent()));
+
+        log.info("测试结果：{}", JSON.toJSONString(outputs));
+
     }
 
 }
