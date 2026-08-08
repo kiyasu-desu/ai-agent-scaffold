@@ -1,0 +1,33 @@
+ai:
+  agent:
+    config:
+      tables:
+        testAgent04:
+          app-name: testAgent
+          agent:
+            agent-id: 100004
+            agent-name: 测试智能体04
+            agent-desc: 一个测试的智能体
+          module:
+            ai-api:
+              base-url: https://api.deepseek.com
+              api-key: ${DEEPSEEK_API_KEY}
+              completions-path: v1/chat/completions
+              embeddings-path: v1/embeddings
+            chat-model:
+              model: deepseek-v4-flash
+              tool-mcp-list:
+                - sse:
+                    name: baidu-search
+                    base-uri: https://appbuilder.baidu.com/v2/ai_search/mcp/
+                    sse-endpoint: sse?api_key=bce-v3/ALTAK-4obpT3OGHUjAljfHOePNB/6dd2402bbbf0823fc50dd7b87cca45a765837d6e
+                    request-timeout: 5000
+                - local:
+                    name: myToolCallbackProvider
+            agents:
+              - name: testAgent
+                description: 信息搜索与大小写转化
+                instruction: |
+                  通过百度搜索信息，并返回用户需要的资讯，或进行单词的大小写转换
+            runner:
+              agent-name: testAgent
