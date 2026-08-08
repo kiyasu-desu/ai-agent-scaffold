@@ -18,7 +18,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 @Slf4j
 @RunWith(SpringRunner.class)
@@ -29,7 +28,7 @@ public class AiAgentAutoConfigTest {
     private ApplicationContext applicationContext;
 
     @Test
-    public void test_agent() throws InterruptedException {
+    public void test_agent() {
         AiAgentRegisterVO aiAgentRegisterVO = applicationContext.getBean("100001", AiAgentRegisterVO.class);
 
         String appName = aiAgentRegisterVO.getAppName();
@@ -70,7 +69,7 @@ public class AiAgentAutoConfigTest {
     }
 
     @Test
-    public void test_agent03() throws InterruptedException {
+    public void test_agent03() {
         AiAgentRegisterVO aiAgentRegisterVO = applicationContext.getBean("100003", AiAgentRegisterVO.class);
 
         String appName = aiAgentRegisterVO.getAppName();
@@ -81,6 +80,27 @@ public class AiAgentAutoConfigTest {
                 .blockingGet();
 
         Content userMessage = Content.fromParts(Part.fromText("你具备哪些能力"));
+        Flowable<Event> events = runner.runAsync("kiyasu", session.id(), userMessage);
+
+        List<String> outputs = new ArrayList<>();
+        events.blockingForEach(event -> outputs.add(event.stringifyContent()));
+
+        log.info("测试结果：{}", JSON.toJSONString(outputs));
+
+    }
+
+    @Test
+    public void test_agent04() {
+        AiAgentRegisterVO aiAgentRegisterVO = applicationContext.getBean("100004", AiAgentRegisterVO.class);
+
+        String appName = aiAgentRegisterVO.getAppName();
+        InMemoryRunner runner = aiAgentRegisterVO.getRunner();
+
+        Session session = runner.sessionService()
+                .createSession(appName, "kiyasu")
+                .blockingGet();
+
+        Content userMessage = Content.fromParts(Part.fromText("将kiyasu转换为大写"));
         Flowable<Event> events = runner.runAsync("kiyasu", session.id(), userMessage);
 
         List<String> outputs = new ArrayList<>();
