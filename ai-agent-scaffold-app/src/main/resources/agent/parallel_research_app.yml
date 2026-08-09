@@ -10,12 +10,12 @@ ai:
             agent-desc: 并行研究并汇总的智能体管道
           module:
             ai-api:
-              base-url: https://api.deepseek.com
-              api-key: ${DEEPSEEK_API_KEY}
+              base-url: https://api.xiaomimimo.com
+              api-key: ${AI_AGENT_SCAFFOLD_MIMO_API_KEY}
               completions-path: v1/chat/completions
               embeddings-path: v1/embeddings
             chat-model:
-              model: deepseek-v4-flash
+              model: mimo-v2.5
               tool-mcp-list:
                 - sse:
                     name: baidu-search
