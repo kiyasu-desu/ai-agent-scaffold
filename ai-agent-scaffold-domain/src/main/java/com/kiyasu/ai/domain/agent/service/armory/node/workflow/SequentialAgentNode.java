@@ -2,26 +2,20 @@ package com.kiyasu.ai.domain.agent.service.armory.node.workflow;
 
 import cn.bugstack.wrench.design.framework.tree.StrategyHandler;
 import com.google.adk.agents.BaseAgent;
-import com.google.adk.agents.ParallelAgent;
 import com.google.adk.agents.SequentialAgent;
 import com.kiyasu.ai.domain.agent.model.entity.ArmoryCommandEntity;
 import com.kiyasu.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.kiyasu.ai.domain.agent.model.valobj.AiAgentRegisterVO;
 import com.kiyasu.ai.domain.agent.service.armory.AbstractArmorySupport;
 import com.kiyasu.ai.domain.agent.service.armory.factory.DefaultArmoryFactory;
-import com.kiyasu.ai.domain.agent.service.armory.node.RunnerNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Slf4j
 @Service
 public class SequentialAgentNode extends AbstractArmorySupport {
-
-    @Resource
-    private RunnerNode runnerNode;
 
     @Override
     protected AiAgentRegisterVO doApply(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {

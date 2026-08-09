@@ -6,7 +6,6 @@ import com.google.adk.agents.LoopAgent;
 import com.kiyasu.ai.domain.agent.model.entity.ArmoryCommandEntity;
 import com.kiyasu.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.kiyasu.ai.domain.agent.model.valobj.AiAgentRegisterVO;
-import com.kiyasu.ai.domain.agent.model.valobj.enums.AgentTypeEnum;
 import com.kiyasu.ai.domain.agent.service.armory.AbstractArmorySupport;
 import com.kiyasu.ai.domain.agent.service.armory.factory.DefaultArmoryFactory;
 import lombok.extern.slf4j.Slf4j;
