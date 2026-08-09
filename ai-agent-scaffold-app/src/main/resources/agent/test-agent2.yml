@@ -31,3 +31,6 @@ ai:
                   通过百度搜索信息，并返回用户需要的资讯，或进行单词的大小写转换
             runner:
               agent-name: testAgent
+              plugin-name-list:
+                - myTestPlugin
+                - myLogPlugin

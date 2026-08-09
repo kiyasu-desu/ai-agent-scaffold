@@ -1,10 +1,10 @@
-package com.kiyasu.ai.domain.agent.service.armory.mcp.client.factory;
+package com.kiyasu.ai.domain.agent.service.armory.matter.mcp.client.factory;
 
 import com.kiyasu.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
-import com.kiyasu.ai.domain.agent.service.armory.mcp.client.ToolMcpCreateService;
-import com.kiyasu.ai.domain.agent.service.armory.mcp.client.impl.LocalToolMcpCreateService;
-import com.kiyasu.ai.domain.agent.service.armory.mcp.client.impl.SSEToolMcpCreateService;
-import com.kiyasu.ai.domain.agent.service.armory.mcp.client.impl.StdioToolMcpCreateService;
+import com.kiyasu.ai.domain.agent.service.armory.matter.mcp.client.ToolMcpCreateService;
+import com.kiyasu.ai.domain.agent.service.armory.matter.mcp.client.impl.LocalToolMcpCreateService;
+import com.kiyasu.ai.domain.agent.service.armory.matter.mcp.client.impl.SSEToolMcpCreateService;
+import com.kiyasu.ai.domain.agent.service.armory.matter.mcp.client.impl.StdioToolMcpCreateService;
 import com.kiyasu.ai.types.enums.ResponseCode;
 import com.kiyasu.ai.types.exception.AppException;
 import lombok.extern.slf4j.Slf4j;
