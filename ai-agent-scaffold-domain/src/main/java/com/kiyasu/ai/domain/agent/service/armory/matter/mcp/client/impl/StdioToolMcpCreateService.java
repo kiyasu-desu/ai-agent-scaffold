@@ -1,8 +1,8 @@
-package com.kiyasu.ai.domain.agent.service.armory.mcp.client.impl;
+package com.kiyasu.ai.domain.agent.service.armory.matter.mcp.client.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kiyasu.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
-import com.kiyasu.ai.domain.agent.service.armory.mcp.client.ToolMcpCreateService;
+import com.kiyasu.ai.domain.agent.service.armory.matter.mcp.client.ToolMcpCreateService;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.ServerParameters;

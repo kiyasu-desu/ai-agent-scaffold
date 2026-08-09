@@ -1,7 +1,7 @@
-package com.kiyasu.ai.domain.agent.service.armory.mcp.client.impl;
+package com.kiyasu.ai.domain.agent.service.armory.matter.mcp.client.impl;
 
 import com.kiyasu.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
-import com.kiyasu.ai.domain.agent.service.armory.mcp.client.ToolMcpCreateService;
+import com.kiyasu.ai.domain.agent.service.armory.matter.mcp.client.ToolMcpCreateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
