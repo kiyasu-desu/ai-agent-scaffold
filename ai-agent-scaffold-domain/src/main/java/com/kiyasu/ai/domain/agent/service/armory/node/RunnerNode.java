@@ -2,7 +2,6 @@ package com.kiyasu.ai.domain.agent.service.armory.node;
 
 import cn.bugstack.wrench.design.framework.tree.StrategyHandler;
 import com.google.adk.agents.BaseAgent;
-import com.google.adk.agents.SequentialAgent;
 import com.google.adk.plugins.BasePlugin;
 import com.google.adk.runner.InMemoryRunner;
 import com.google.common.collect.ImmutableList;
@@ -15,7 +14,6 @@ import com.kiyasu.ai.types.enums.ResponseCode;
 import com.kiyasu.ai.types.exception.AppException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -50,7 +48,7 @@ public class RunnerNode extends AbstractArmorySupport {
                 .build();
 
         // 注册到 Spring 容器中
-        registerBean(agentId, AiAgentRegisterVO.class, aiAgentRegisterVO);
+        registerBean(agentId, aiAgentRegisterVO);
 
         return aiAgentRegisterVO;
     }

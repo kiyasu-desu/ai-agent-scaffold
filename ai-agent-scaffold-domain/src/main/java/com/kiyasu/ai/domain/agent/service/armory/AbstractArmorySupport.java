@@ -12,8 +12,6 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Resource;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 public abstract class AbstractArmorySupport extends AbstractMultiThreadStrategyRouter<ArmoryCommandEntity, DefaultArmoryFactory.DynamicContext, AiAgentRegisterVO> {
 
@@ -23,22 +21,21 @@ public abstract class AbstractArmorySupport extends AbstractMultiThreadStrategyR
     protected ApplicationContext applicationContext;
 
     @Override
-    protected void multiThread(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws ExecutionException, InterruptedException, TimeoutException {
+    protected void multiThread(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) {
 
     }
 
     /**
      * 通用的Bean注册方法
      *
-     * @param beanName  Bean名称
-     * @param beanClass Bean类型
-     * @param <T>       Bean类型
+     * @param <T>      Bean类型
+     * @param beanName Bean名称
      */
-    protected synchronized <T> void registerBean(String beanName, Class<T> beanClass, T beanInstance) {
+    protected synchronized <T> void registerBean(String beanName, T beanInstance) {
         DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
 
         // 注册Bean
-        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(beanClass, () -> beanInstance);
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition((Class<T>) AiAgentRegisterVO.class, () -> beanInstance);
         BeanDefinition beanDefinition = beanDefinitionBuilder.getRawBeanDefinition();
         beanDefinition.setScope(BeanDefinition.SCOPE_SINGLETON);
 
