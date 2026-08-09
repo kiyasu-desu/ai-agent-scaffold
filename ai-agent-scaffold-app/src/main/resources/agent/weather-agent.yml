@@ -25,6 +25,7 @@ ai:
                       args:
                         - -m
                         - mcp_weather_server
+
             agents:
               - name: WeatherAgent
                 description: Queries current weather for a given city.
