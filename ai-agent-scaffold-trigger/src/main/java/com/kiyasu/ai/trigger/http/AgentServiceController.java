@@ -63,7 +63,7 @@ public class AgentServiceController implements IAgentService {
 
     }
 
-    @RequestMapping(value = "create_session", method = RequestMethod.GET)
+    @RequestMapping(value = "create_session", method = RequestMethod.POST)
     @Override
     public Response<CreateSessionResponseDTO> createSession(@RequestBody CreateSessionRequestDTO requestDTO) {
 
