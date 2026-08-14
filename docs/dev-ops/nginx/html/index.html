@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI 智能体对话控制台">
+  <title>AI Agent Console - 对话</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --panel: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e5eaf2;
+      --primary: #2563eb;
+      --primary-strong: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --assistant-bubble: #f1f5f9;
+      --user-bubble: linear-gradient(135deg, #2563eb, #3b82f6);
+      --shadow-sm: 0 8px 22px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 18px 42px rgba(15, 23, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button,
+    textarea,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      display: grid;
+      grid-template-rows: 64px minmax(0, 1fr);
+      width: 100%;
+      height: 100vh;
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 0 24px;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 1px 8px rgba(15, 23, 42, 0.035);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      color: #ffffff;
+      background: linear-gradient(135deg, #38bdf8, #2563eb 60%, #7c3aed);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.28);
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .brand-copy {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      line-height: 1.15;
+    }
+
+    .brand-copy strong {
+      white-space: nowrap;
+    }
+
+    .brand-copy small {
+      color: #94a3b8;
+      font-size: 11px;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .connection-state {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 11px;
+      border: 1px solid #e2e8f0;
+      border-radius: 999px;
+      color: #64748b;
+      background: #ffffff;
+      font-size: 12px;
+    }
+
+    .connection-state .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #94a3b8;
+      box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.14);
+    }
+
+    .connection-state.online .dot {
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.14);
+    }
+
+    .user-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 6px 5px 5px;
+      border: 1px solid #e2e8f0;
+      border-radius: 999px;
+      background: #ffffff;
+    }
+
+    .user-avatar {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      color: #ffffff;
+      background: linear-gradient(135deg, #6366f1, #2563eb);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .user-name {
+      max-width: 120px;
+      overflow: hidden;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 600;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .logout-btn {
+      height: 36px;
+      padding: 0 13px;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      color: #64748b;
+      background: #ffffff;
+      font-size: 12px;
+      transition: 0.18s ease;
+    }
+
+    .logout-btn:hover {
+      border-color: #fecaca;
+      color: #dc2626;
+      background: #fff7f7;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      min-height: 0;
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      border-right: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .sidebar-header {
+      padding: 22px 20px 12px;
+    }
+
+    .sidebar-header h2 {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: 0.2px;
+    }
+
+    .sidebar-header p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .sidebar-body {
+      flex: 1;
+      min-height: 0;
+      padding: 6px 14px 18px;
+      overflow-y: auto;
+    }
+
+    .agent-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .agent-card {
+      position: relative;
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #e8edf5;
+      border-radius: 14px;
+      color: var(--ink);
+      background: #ffffff;
+      text-align: left;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, background 0.18s ease;
+    }
+
+    .agent-card:hover {
+      border-color: #bfdbfe;
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
+    }
+
+    .agent-card.selected {
+      border-color: #93c5fd;
+      background: var(--primary-soft);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    }
+
+    .agent-card.selected::after {
+      content: "";
+      position: absolute;
+      top: 16px;
+      right: 13px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .agent-card-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .agent-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      color: #2563eb;
+      background: #e8f1ff;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .agent-card.selected .agent-icon {
+      color: #ffffff;
+      background: linear-gradient(135deg, #38bdf8, #2563eb);
+    }
+
+    .agent-name {
+      min-width: 0;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .agent-id {
+      color: #94a3b8;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .agent-desc {
+      display: -webkit-box;
+      margin-top: 9px;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .sidebar-empty {
+      margin: 4px 14px 18px;
+      padding: 22px 16px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 14px;
+      color: var(--muted);
+      background: #f8fafc;
+      font-size: 12px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .sidebar-empty button {
+      margin-top: 12px;
+      padding: 8px 12px;
+      border: 0;
+      border-radius: 8px;
+      color: #ffffff;
+      background: var(--primary);
+      font-size: 12px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 14px 20px 20px;
+      border-top: 1px solid var(--line);
+    }
+
+    .session-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .session-label {
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .session-id {
+      max-width: 180px;
+      overflow: hidden;
+      color: #475569;
+      font-family: "Cascadia Code", Consolas, monospace;
+      font-size: 11px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .chat {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      min-width: 0;
+      min-height: 0;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(219, 234, 254, 0.36), transparent 25%),
+        radial-gradient(circle at 92% 84%, rgba(221, 214, 254, 0.26), transparent 28%),
+        #f8faff;
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px 28px 14px;
+    }
+
+    .chat-title {
+      min-width: 0;
+    }
+
+    .chat-title h1 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .chat-title p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .chat-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #94a3b8;
+      font-size: 12px;
+    }
+
+    .chat-tools span {
+      padding: 7px 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .messages {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      min-height: 0;
+      padding: 14px 28px 28px;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    .messages::-webkit-scrollbar,
+    .sidebar-body::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .messages::-webkit-scrollbar-thumb,
+    .sidebar-body::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: #d8e0ec;
+    }
+
+    .empty-state {
+      display: grid;
+      place-items: center;
+      align-content: center;
+      flex: 1;
+      min-height: 100%;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .empty-orbit {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 108px;
+      height: 108px;
+      margin-bottom: 22px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 30%, #ffffff, transparent 45%),
+        linear-gradient(145deg, #2563eb, #7c3aed);
+      box-shadow: 0 20px 42px rgba(37, 99, 235, 0.2);
+    }
+
+    .empty-orbit::before,
+    .empty-orbit::after {
+      content: "";
+      position: absolute;
+      inset: -12px;
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      border-radius: 50%;
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    .empty-orbit::after {
+      inset: -24px;
+      opacity: 0.55;
+      animation-delay: 0.6s;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(0.95); opacity: 0.35; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+    }
+
+    .empty-orbit span {
+      color: #ffffff;
+      font-size: 32px;
+      font-weight: 800;
+    }
+
+    .empty-state h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.02em;
+    }
+
+    .empty-state p {
+      max-width: 460px;
+      margin: 10px auto 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .message-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .message-row.assistant {
+      justify-content: flex-start;
+    }
+
+    .message-row.user {
+      justify-content: flex-end;
+    }
+
+    .message-avatar {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .message-row.assistant .message-avatar {
+      order: 0;
+      background: linear-gradient(135deg, #0f172a, #334155);
+    }
+
+    .message-row.user .message-avatar {
+      order: 1;
+      background: linear-gradient(135deg, #6366f1, #2563eb);
+    }
+
+    .message-content {
+      max-width: min(760px, 76%);
+    }
+
+    .message-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      color: #94a3b8;
+      font-size: 11px;
+    }
+
+    .message-row.assistant .message-meta {
+      justify-content: flex-start;
+    }
+
+    .message-row.user .message-meta {
+      justify-content: flex-end;
+    }
+
+    .message-bubble {
+      padding: 14px 17px;
+      border-radius: 18px;
+      color: #1e293b;
+      background: #ffffff;
+      border: 1px solid #e6ebf3;
+      box-shadow: var(--shadow-sm);
+      font-size: 14px;
+      line-height: 1.75;
+      word-break: break-word;
+    }
+
+    .message-row.assistant .message-bubble {
+      background: var(--assistant-bubble);
+      border-bottom-left-radius: 6px;
+    }
+
+    .message-row.user .message-bubble {
+      color: #ffffff;
+      background: var(--user-bubble);
+      border: 0;
+      border-bottom-right-radius: 6px;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
+    }
+
+    .message-bubble pre {
+      margin: 10px 0;
+      padding: 13px 15px;
+      overflow-x: auto;
+      border: 1px solid #e2e8f0;
+      border-radius: 11px;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: "Cascadia Code", Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .message-bubble code:not(pre code) {
+      padding: 2px 5px;
+      border-radius: 5px;
+      color: #1e40af;
+      background: #dbeafe;
+      font-family: "Cascadia Code", Consolas, monospace;
+      font-size: 0.9em;
+    }
+
+    .message-row.user .message-bubble code:not(pre code) {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .typing-dots {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      height: 20px;
+    }
+
+    .typing-dots i {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #64748b;
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+
+    .typing-dots i:nth-child(2) { animation-delay: 0.12s; }
+    .typing-dots i:nth-child(3) { animation-delay: 0.24s; }
+
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+      30% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    .composer-wrap {
+      padding: 10px 28px 24px;
+    }
+
+    .composer {
+      max-width: 980px;
+      margin: 0 auto;
+      border: 1px solid #dbe3ef;
+      border-radius: 18px;
+      background: #ffffff;
+      box-shadow: 0 18px 46px rgba(15, 23, 42, 0.1);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .composer:focus-within {
+      border-color: #93c5fd;
+      box-shadow: 0 18px 48px rgba(37, 99, 235, 0.13), 0 0 0 4px rgba(37, 99, 235, 0.07);
+    }
+
+    #chatForm {
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+      padding: 14px 14px 14px 18px;
+    }
+
+    #messageInput {
+      flex: 1;
+      min-height: 48px;
+      max-height: 160px;
+      padding: 13px 4px;
+      border: 0;
+      outline: 0;
+      resize: none;
+      color: var(--ink);
+      background: transparent;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    #messageInput::placeholder {
+      color: #a5b1c2;
+    }
+
+    .send-btn {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 46px;
+      height: 46px;
+      border: 0;
+      border-radius: 14px;
+      color: #ffffff;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      box-shadow: 0 12px 22px rgba(37, 99, 235, 0.24);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    }
+
+    .send-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 28px rgba(37, 99, 235, 0.3);
+    }
+
+    .send-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.58;
+      transform: none;
+    }
+
+    .send-btn svg {
+      width: 21px;
+      height: 21px;
+    }
+
+    .composer-hint {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 18px 12px;
+      color: #94a3b8;
+      font-size: 11px;
+    }
+
+    .composer-hint kbd {
+      padding: 2px 6px;
+      border: 1px solid #dbe3ef;
+      border-bottom-width: 2px;
+      border-radius: 5px;
+      color: #64748b;
+      background: #f8fafc;
+      font-family: inherit;
+      font-size: 10px;
+    }
+
+    .toast {
+      position: fixed;
+      top: 78px;
+      left: 50%;
+      z-index: 50;
+      min-width: 220px;
+      max-width: min(440px, 90vw);
+      padding: 11px 15px;
+      border-radius: 11px;
+      color: #ffffff;
+      background: #0f172a;
+      box-shadow: var(--shadow-md);
+      font-size: 13px;
+      line-height: 1.5;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -12px);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .toast.error {
+      background: #dc2626;
+    }
+
+    @media (max-width: 920px) {
+      .workspace {
+        grid-template-columns: 240px minmax(0, 1fr);
+      }
+
+      .brand-copy small,
+      .connection-state,
+      .user-name {
+        display: none;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .workspace {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(0, 1fr);
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .messages {
+        padding: 12px 16px 20px;
+      }
+
+      .composer-wrap {
+        padding: 8px 16px 16px;
+      }
+
+      .message-content {
+        max-width: 84%;
+      }
+
+      .chat-header {
+        padding: 16px 18px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">AI</span>
+        <span class="brand-copy">
+          <strong>AI Agent Console</strong>
+          <small>Intelligent Conversation</small>
+        </span>
+      </div>
+
+      <div class="topbar-actions">
+        <span class="connection-state" id="connectionState">
+          <span class="dot"></span>
+          <span id="connectionText">连接服务中</span>
+        </span>
+
+        <div class="user-chip">
+          <span class="user-avatar" id="userAvatar">A</span>
+          <span class="user-name" id="userName">admin</span>
+        </div>
+
+        <button class="logout-btn" id="logoutBtn" type="button">退出登录</button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h2>选择智能体</h2>
+          <p>选择智能体后，可在下方展开并切换该智能体下的多个对话。</p>
+        </div>
+
+        <div class="sidebar-body">
+          <div class="agent-list" id="agentList" aria-live="polite"></div>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="session-meta">
+            <span class="session-label">当前会话</span>
+            <span class="session-id" id="sessionId">未创建</span>
+          </div>
+        </div>
+      </aside>
+
+      <section class="chat">
+        <header class="chat-header">
+          <div class="chat-title">
+            <h1 id="chatTitle">AI 智能体对话</h1>
+            <p id="chatSubtitle">请先选择一个智能体，然后在下方输入你的问题</p>
+          </div>
+        </header>
+
+        <div class="messages" id="messages"></div>
+
+        <div class="composer-wrap">
+          <div class="composer">
+            <form id="chatForm" autocomplete="off">
+              <textarea id="messageInput" rows="1" placeholder="输入消息，Enter 发送，Shift + Enter 换行"></textarea>
+              <button class="send-btn" id="sendBtn" type="submit" aria-label="发送消息">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m22 2-7 20-4-9-9-4Z"/>
+                  <path d="M22 2 11 13"/>
+                </svg>
+              </button>
+            </form>
+            <div class="composer-hint">
+              <span>默认账号：admin</span>
+              <span><kbd>Enter</kbd> 发送 · <kbd>Shift + Enter</kbd> 换行</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="./config.js"></script>
+  <script>
+    (function () {
+      const SESSION_COOKIE = "ai_agent_session";
+      const USER_COOKIE = "ai_agent_user";
+      const SUCCESS_CODE = "0000";
+
+      const config = window.AI_AGENT_CONFIG;
+      const apiBaseUrl = (config && config.apiBaseUrl) || "http://127.0.0.1:8091";
+      const endpoints = (config && config.endpoints) || {
+        queryAiAgentConfigList: "/api/v1/query_ai_agent_config_list",
+        createSession: "/api/v1/create_session",
+        chat: "/api/v1/chat"
+      };
+
+      const elements = {
+        connectionState: document.getElementById("connectionState"),
+        connectionText: document.getElementById("connectionText"),
+        userAvatar: document.getElementById("userAvatar"),
+        userName: document.getElementById("userName"),
+        agentList: document.getElementById("agentList"),
+        chatTitle: document.getElementById("chatTitle"),
+        chatSubtitle: document.getElementById("chatSubtitle"),
+        messages: document.getElementById("messages"),
+        sessionId: document.getElementById("sessionId"),
+        messageInput: document.getElementById("messageInput"),
+        chatForm: document.getElementById("chatForm"),
+        sendBtn: document.getElementById("sendBtn"),
+        logoutBtn: document.getElementById("logoutBtn"),
+        toast: document.getElementById("toast")
+      };
+
+      const state = {
+        userId: "",
+        agents: [],
+        selectedAgentId: "",
+        activeConversationId: "",
+        conversationsByAgent: {},
+        sending: false
+      };
+
+      function getCookie(name) {
+        const prefix = name + "=";
+        const cookies = document.cookie ? document.cookie.split(";") : [];
+        for (let raw of cookies) {
+          const cookie = raw.trim();
+          if (cookie.indexOf(prefix) === 0) {
+            return decodeURIComponent(cookie.slice(prefix.length));
+          }
+        }
+        return "";
+      }
+
+      function deleteCookie(name) {
+        document.cookie = name + "=; path=/; max-age=0; SameSite=Lax";
+      }
+
+      function showToast(message, type) {
+        elements.toast.textContent = message;
+        elements.toast.className = "toast show" + (type === "error" ? " error" : "");
+        clearTimeout(showToast.timer);
+        showToast.timer = setTimeout(() => {
+          elements.toast.className = "toast";
+        }, 3600);
+      }
+
+      function setConnectionState(status, text) {
+        elements.connectionState.classList.toggle("online", status === "online");
+        elements.connectionText.textContent = text;
+      }
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function renderMessageContent(content) {
+        const codeBlocks = [];
+        let html = escapeHtml(content);
+
+        html = html.replace(/```([\s\S]*?)```/g, function (_, code) {
+          const index = codeBlocks.length;
+          const cleaned = code.replace(/^\r?\n/, "").replace(/\r?\n$/, "");
+          codeBlocks.push("<pre><code>" + cleaned + "</code></pre>");
+          return "\u0000CODE" + index + "\u0000";
+        });
+
+        html = html
+          .replace(/`([^`]+)`/g, "<code>$1</code>")
+          .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+          .replace(/\r?\n/g, "<br>")
+          .replace(/\u0000CODE(\d+)\u0000/g, function (_, index) {
+            return codeBlocks[Number(index)];
+          });
+
+        return html;
+      }
+
+      function getTimeLabel() {
+        return new Date().toLocaleTimeString("zh-CN", {
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      }
+
+      function createId(prefix) {
+        return prefix + "-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
+      }
+
+      function getAgent(agentId) {
+        return state.agents.find((item) => item.agentId === agentId);
+      }
+
+      function getConversations(agentId) {
+        if (!state.conversationsByAgent[agentId]) {
+          state.conversationsByAgent[agentId] = [];
+        }
+        return state.conversationsByAgent[agentId];
+      }
+
+      function getActiveConversation() {
+        const list = getConversations(state.selectedAgentId);
+        return list.find((item) => {
+          return item.id === state.activeConversationId && item.agentId === state.selectedAgentId;
+        }) || null;
+      }
+
+      function ensureDefaultConversation(agentId) {
+        const list = getConversations(agentId);
+        if (!list.length) {
+          list.push({
+            id: createId("conv"),
+            agentId: agentId,
+            title: "新对话",
+            sessionId: "",
+            messages: []
+          });
+        }
+        return list;
+      }
+
+      function scrollToBottom() {
+        requestAnimationFrame(() => {
+          elements.messages.scrollTop = elements.messages.scrollHeight;
+        });
+      }
+
+      function updateChatHeader() {
+        const agent = getAgent(state.selectedAgentId);
+        elements.chatTitle.textContent = agent ? agent.agentName : "AI 智能体对话";
+        elements.chatSubtitle.textContent = agent
+          ? (agent.agentDesc || "已选择该智能体，可以开始提问")
+          : "请先选择一个智能体，然后在下方输入你的问题";
+      }
+
+      function updateSessionMeta() {
+        const conversation = getActiveConversation();
+        const sessionId = conversation ? conversation.sessionId : "";
+        elements.sessionId.textContent = sessionId || "未创建";
+        elements.sessionId.title = sessionId || "";
+      }
+
+      function renderEmptyState() {
+        elements.messages.innerHTML =
+          '<div class="empty-state">' +
+            '<div class="empty-orbit"><span>AI</span></div>' +
+            '<h2>开始一场智能体对话</h2>' +
+            '<p>从左侧选择智能体并新建对话，输入你的任务或问题。系统会在新对话首次发送时创建会话，并将结果实时展示在这里。</p>' +
+          '</div>';
+      }
+
+      function renderMessages() {
+        const conversation = getActiveConversation();
+        if (!conversation || !conversation.messages.length) {
+          renderEmptyState();
+          return;
+        }
+
+        elements.messages.innerHTML = "";
+        conversation.messages.forEach((message) => appendMessageElement(message));
+        scrollToBottom();
+      }
+
+      function appendMessageElement(message) {
+        const row = document.createElement("div");
+        row.className = "message-row " + message.role;
+
+        const avatar = document.createElement("div");
+        avatar.className = "message-avatar";
+        avatar.textContent = message.role === "user" ? (state.userId.charAt(0) || "A") : "AI";
+
+        const contentWrap = document.createElement("div");
+        contentWrap.className = "message-content";
+
+        const meta = document.createElement("div");
+        meta.className = "message-meta";
+        const roleName = message.role === "user" ? state.userId : (getAgent(state.selectedAgentId) || {}).agentName || "AI Agent";
+        meta.innerHTML = "<span>" + escapeHtml(roleName) + "</span><span>·</span><span>" + escapeHtml(message.time || getTimeLabel()) + "</span>";
+
+        const bubble = document.createElement("div");
+        bubble.className = "message-bubble";
+        if (message.loading) {
+          bubble.innerHTML = '<span class="typing-dots"><i></i><i></i><i></i></span>';
+        } else {
+          bubble.innerHTML = renderMessageContent(message.content);
+        }
+
+        contentWrap.appendChild(meta);
+        contentWrap.appendChild(bubble);
+        row.appendChild(avatar);
+        row.appendChild(contentWrap);
+        elements.messages.appendChild(row);
+      }
+
+      function renderSidebar() {
+        renderAgentList();
+      }
+
+      function renderAgentList() {
+        elements.agentList.innerHTML = "";
+
+        if (!state.agents.length) {
+          const empty = document.createElement("div");
+          empty.className = "sidebar-empty";
+          empty.innerHTML = "暂未获取到智能体列表。<br>请确认后端服务已启动。";
+          const retry = document.createElement("button");
+          retry.type = "button";
+          retry.textContent = "重新加载";
+          retry.addEventListener("click", loadAgents);
+          empty.appendChild(retry);
+          elements.agentList.appendChild(empty);
+          return;
+        }
+
+        state.agents.forEach((agent) => {
+          const card = document.createElement("button");
+          card.type = "button";
+          card.className = "agent-card" + (agent.agentId === state.selectedAgentId ? " selected" : "");
+          card.dataset.agentId = agent.agentId;
+
+          const head = document.createElement("div");
+          head.className = "agent-card-head";
+
+          const icon = document.createElement("span");
+          icon.className = "agent-icon";
+          icon.textContent = (agent.agentName || "A").charAt(0).toUpperCase();
+
+          const name = document.createElement("span");
+          name.className = "agent-name";
+          name.textContent = agent.agentName || "未命名智能体";
+
+          const id = document.createElement("span");
+          id.className = "agent-id";
+          id.textContent = agent.agentId ? "#" + agent.agentId : "";
+
+          head.appendChild(icon);
+          head.appendChild(name);
+          head.appendChild(id);
+
+          const desc = document.createElement("div");
+          desc.className = "agent-desc";
+          desc.textContent = agent.agentDesc || "暂无描述";
+
+          card.appendChild(head);
+          card.appendChild(desc);
+          card.addEventListener("click", () => selectAgent(agent.agentId));
+          elements.agentList.appendChild(card);
+        });
+      }
+
+      function selectAgent(agentId) {
+        if (!agentId) {
+          return;
+        }
+
+        state.selectedAgentId = agentId;
+        const list = ensureDefaultConversation(agentId);
+        state.activeConversationId = list[0].id;
+        list[0].agentId = agentId;
+        if (!list[0].messages.length) {
+          list[0].sessionId = "";
+        }
+        updateChatHeader();
+        updateSessionMeta();
+        renderSidebar();
+        renderMessages();
+      }
+
+      async function apiRequest(path, options) {
+        const requestOptions = options || {};
+        const headers = Object.assign({ "Content-Type": "application/json" }, requestOptions.headers || {});
+        const response = await fetch(apiBaseUrl + path, Object.assign({}, requestOptions, { headers }));
+
+        if (!response.ok) {
+          throw new Error("请求失败，HTTP " + response.status);
+        }
+
+        const payload = await response.json();
+        if (payload.code !== SUCCESS_CODE) {
+          throw new Error(payload.info || "服务返回异常，错误码：" + payload.code);
+        }
+        return payload.data;
+      }
+
+      async function loadAgents() {
+        try {
+          setConnectionState("offline", "加载智能体中");
+          const data = await apiRequest(endpoints.queryAiAgentConfigList);
+          state.agents = data || [];
+          if (!state.agents.length) {
+            renderSidebar();
+            setConnectionState("offline", "无可用智能体");
+            return;
+          }
+          setConnectionState("online", state.agents.length + " 个智能体");
+          selectAgent(state.agents[0].agentId);
+        } catch (error) {
+          state.agents = [];
+          setConnectionState("offline", "服务连接失败");
+          renderSidebar();
+          showToast("获取智能体列表失败：" + error.message, "error");
+        }
+      }
+
+      async function createSession(agentId, userId) {
+        const data = await apiRequest(endpoints.createSession, {
+          method: "POST",
+          body: JSON.stringify({
+            agentId: agentId,
+            userId: userId
+          })
+        });
+        return data && data.sessionId ? data.sessionId : "";
+      }
+
+      async function requestChat(payload) {
+        const data = await apiRequest(endpoints.chat, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        return data && typeof data.content === "string" ? data.content : "";
+      }
+
+      async function sendMessage() {
+        const message = elements.messageInput.value.trim();
+        if (!message || state.sending) {
+          return;
+        }
+
+        if (!state.selectedAgentId) {
+          showToast("请先选择一个智能体。", "error");
+          return;
+        }
+
+        ensureDefaultConversation(state.selectedAgentId);
+        const conversation = getActiveConversation();
+        if (!conversation) {
+          return;
+        }
+
+        if (conversation.agentId !== state.selectedAgentId) {
+          conversation.agentId = state.selectedAgentId;
+          conversation.sessionId = "";
+          conversation.messages = [];
+          conversation.title = "新对话";
+        }
+
+        const firstUserMessage = !conversation.messages.some((item) => item.role === "user");
+        state.sending = true;
+        elements.sendBtn.disabled = true;
+        elements.messageInput.value = "";
+        elements.messageInput.style.height = "auto";
+
+        const now = getTimeLabel();
+        const userMessage = {
+          id: createId("msg"),
+          role: "user",
+          content: message,
+          time: now
+        };
+        const assistantMessage = {
+          id: createId("msg"),
+          role: "assistant",
+          content: "",
+          time: now,
+          loading: true
+        };
+
+        conversation.messages.push(userMessage);
+        conversation.messages.push(assistantMessage);
+
+        if (firstUserMessage) {
+          conversation.title = message.length > 20 ? message.slice(0, 20) + "…" : message;
+        }
+
+        renderMessages();
+        renderSidebar();
+
+        try {
+          if (!conversation.sessionId) {
+            const sessionId = await createSession(state.selectedAgentId, state.userId);
+            if (!sessionId) {
+              throw new Error("会话创建失败，未返回 sessionId");
+            }
+            conversation.sessionId = sessionId;
+            updateSessionMeta();
+            renderSidebar();
+          }
+
+          const answer = await requestChat({
+            agentId: state.selectedAgentId,
+            userId: state.userId,
+            sessionId: conversation.sessionId,
+            message: message
+          });
+
+          assistantMessage.content = answer || "（智能体未返回内容）";
+          assistantMessage.time = getTimeLabel();
+          assistantMessage.loading = false;
+          setConnectionState("online", state.agents.length + " 个智能体");
+        } catch (error) {
+          assistantMessage.content = "请求失败：" + error.message;
+          assistantMessage.time = getTimeLabel();
+          assistantMessage.loading = false;
+          setConnectionState("offline", "对话失败");
+          showToast("对话失败：" + error.message, "error");
+        } finally {
+          state.sending = false;
+          elements.sendBtn.disabled = false;
+          renderMessages();
+          renderSidebar();
+          elements.messageInput.focus();
+        }
+      }
+
+      function autoResizeTextarea() {
+        elements.messageInput.style.height = "auto";
+        elements.messageInput.style.height = Math.min(elements.messageInput.scrollHeight, 160) + "px";
+      }
+
+      function authenticateAndInit() {
+        const userId = getCookie(USER_COOKIE);
+        const sessionToken = getCookie(SESSION_COOKIE);
+
+        if (!userId || !sessionToken) {
+          window.location.replace("./login.html");
+          return;
+        }
+
+        state.userId = userId;
+        elements.userName.textContent = userId;
+        elements.userAvatar.textContent = userId.charAt(0).toUpperCase();
+        loadAgents();
+      }
+
+      elements.chatForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        sendMessage();
+      });
+
+      elements.messageInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+          event.preventDefault();
+          sendMessage();
+        }
+      });
+
+      elements.messageInput.addEventListener("input", autoResizeTextarea);
+
+      elements.logoutBtn.addEventListener("click", () => {
+        deleteCookie(SESSION_COOKIE);
+        deleteCookie(USER_COOKIE);
+        window.location.replace("./login.html");
+      });
+
+      authenticateAndInit();
+    })();
+  </script>
+</body>
+</html>

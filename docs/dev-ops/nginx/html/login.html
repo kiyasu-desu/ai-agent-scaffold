@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI 智能体管理控制台登录页">
+  <title>AI Agent Console - 登录</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-strong: #1d4ed8;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --surface: #ffffff;
+      --danger: #dc2626;
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      height: 100%;
+    }
+
+    body {
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      background: #eef3fb;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .auth-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(420px, 0.9fr);
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    .brand-panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 42px 56px 34px;
+      color: #ffffff;
+      background:
+        radial-gradient(circle at 70% 20%, rgba(59, 130, 246, 0.32), transparent 34%),
+        radial-gradient(circle at 14% 82%, rgba(139, 92, 246, 0.26), transparent 28%),
+        linear-gradient(145deg, #0b1c3f 0%, #122b5c 48%, #071126 100%);
+      isolation: isolate;
+    }
+
+    .brand-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.72), transparent 78%);
+      z-index: -1;
+    }
+
+    .brand-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    .brand-logo {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      color: #ffffff;
+      background: linear-gradient(135deg, #38bdf8, #2563eb 58%, #7c3aed);
+      box-shadow: 0 10px 28px rgba(37, 99, 235, 0.42);
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .brand-copy {
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+      margin-top: 68px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #b9d3ff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.14);
+    }
+
+    .brand-copy h1 {
+      margin: 26px 0 18px;
+      font-size: clamp(34px, 4vw, 54px);
+      line-height: 1.12;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-copy h1 span {
+      color: #8ee7ff;
+    }
+
+    .brand-copy > p {
+      margin: 0;
+      max-width: 520px;
+      color: rgba(226, 232, 240, 0.78);
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 14px;
+      margin: 30px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      color: #e2e8f0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .feature-list li::before {
+      content: "";
+      flex: 0 0 auto;
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      border-radius: 50%;
+      background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%238ee7ff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / 12px no-repeat,
+        rgba(56, 189, 248, 0.12);
+    }
+
+    .visual-wrap {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      margin-top: 26px;
+      flex: 1;
+      min-height: 280px;
+    }
+
+    .visual-wrap img {
+      display: block;
+      width: min(100%, 660px);
+      height: auto;
+      max-height: 520px;
+      object-fit: contain;
+      filter: drop-shadow(0 28px 48px rgba(2, 8, 23, 0.38));
+    }
+
+    .brand-footer {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      color: rgba(148, 163, 184, 0.72);
+      font-size: 12px;
+      letter-spacing: 0.3px;
+    }
+
+    .form-panel {
+      display: grid;
+      place-items: center;
+      padding: 48px clamp(24px, 6vw, 82px);
+      background:
+        radial-gradient(circle at 100% 0%, rgba(191, 219, 254, 0.42), transparent 30%),
+        #f8fbff;
+    }
+
+    .form-card {
+      width: min(100%, 420px);
+    }
+
+    .mobile-brand {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 34px;
+      font-size: 17px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .mobile-brand .brand-logo {
+      width: 36px;
+      height: 36px;
+      font-size: 15px;
+      border-radius: 10px;
+    }
+
+    .form-heading h2 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 30px;
+      letter-spacing: -0.03em;
+    }
+
+    .form-heading p {
+      margin: 10px 0 30px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap input {
+      width: 100%;
+      height: 50px;
+      padding: 0 46px 0 46px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      outline: none;
+      color: var(--ink);
+      background: #ffffff;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    }
+
+    .input-wrap input::placeholder {
+      color: #94a3b8;
+    }
+
+    .input-wrap input:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .input-icon {
+      position: absolute;
+      top: 50%;
+      left: 16px;
+      width: 20px;
+      height: 20px;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      pointer-events: none;
+    }
+
+    .password-toggle {
+      position: absolute;
+      top: 50%;
+      right: 9px;
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      transform: translateY(-50%);
+      border: 0;
+      border-radius: 8px;
+      color: #64748b;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .password-toggle:hover {
+      color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .password-toggle svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .form-options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 4px 0 24px;
+      font-size: 13px;
+    }
+
+    .remember {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #475569;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .remember input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+    }
+
+    .forgot-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .forgot-link:hover {
+      color: var(--primary-strong);
+    }
+
+    .submit-btn {
+      width: 100%;
+      height: 52px;
+      border: 0;
+      border-radius: 13px;
+      color: #ffffff;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      box-shadow: 0 14px 26px rgba(37, 99, 235, 0.24);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 32px rgba(37, 99, 235, 0.3);
+      filter: brightness(1.04);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.72;
+      transform: none;
+    }
+
+    .default-hint {
+      margin-top: 18px;
+      padding: 11px 14px;
+      border: 1px dashed #c7d2fe;
+      border-radius: 11px;
+      color: #475569;
+      background: #eef2ff;
+      font-size: 12px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .default-hint code {
+      margin: 0 2px;
+      padding: 2px 5px;
+      border-radius: 5px;
+      color: #1e40af;
+      background: #dbeafe;
+      font-family: "Cascadia Code", Consolas, monospace;
+      font-size: 11px;
+    }
+
+    .message {
+      display: none;
+      margin-top: 16px;
+      padding: 11px 13px;
+      border-radius: 11px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .message.error {
+      display: block;
+      color: #991b1b;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+    }
+
+    .message.success {
+      display: block;
+      color: #166534;
+      background: #dcfce7;
+      border: 1px solid #bbf7d0;
+    }
+
+    .success-state {
+      display: none;
+      text-align: center;
+    }
+
+    .success-state.is-visible {
+      display: block;
+    }
+
+    .login-form.is-hidden,
+    .form-heading.is-hidden,
+    .default-hint.is-hidden {
+      display: none;
+    }
+
+    .success-icon {
+      display: grid;
+      place-items: center;
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 22px;
+      border-radius: 50%;
+      color: #ffffff;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      box-shadow: 0 16px 32px rgba(34, 197, 94, 0.24);
+      font-size: 34px;
+    }
+
+    .success-state h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .success-state p {
+      margin: 10px 0 26px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .success-state .submit-btn {
+      display: block;
+      width: 100%;
+      text-decoration: none;
+      line-height: 52px;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(7px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(4px); }
+    }
+
+    .shake {
+      animation: shake 0.34s ease;
+    }
+
+    @media (max-width: 980px) {
+      .auth-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .brand-panel {
+        display: none;
+      }
+
+      .form-panel {
+        min-height: 100vh;
+      }
+
+      .mobile-brand {
+        display: inline-flex;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .form-panel {
+        padding: 32px 22px;
+        align-items: start;
+      }
+
+      .form-heading h2 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="auth-shell">
+    <section class="brand-panel" aria-label="产品介绍">
+      <header class="brand-top">
+        <span class="brand-logo">AI</span>
+        <span>AI Agent Console</span>
+      </header>
+
+      <div class="brand-copy">
+        <span class="eyebrow">AI Agent Console</span>
+        <h1>让智能体<br>成为你的<span>数字同事</span></h1>
+        <p>统一调度、监控并协作多个 AI 智能体，把复杂任务交给值得信赖的自动化伙伴。</p>
+
+        <ul class="feature-list">
+          <li>多智能体编排，自动拆分并推进复杂任务</li>
+          <li>实时观测任务进度、上下文与执行结果</li>
+          <li>安全可控的权限、审计和会话管理</li>
+        </ul>
+      </div>
+
+      <div class="visual-wrap">
+        <img src="./assets/ai-effect.svg" alt="AI 智能体效果图">
+      </div>
+
+      <footer class="brand-footer">
+        <span>© 2026 AI Agent Platform</span>
+        <span>Secure · Observable · Autonomous</span>
+      </footer>
+    </section>
+
+    <section class="form-panel" aria-label="登录表单">
+      <div class="form-card">
+        <div class="mobile-brand">
+          <span class="brand-logo">AI</span>
+          <span>AI Agent Console</span>
+        </div>
+
+        <div class="form-heading" id="formHeading">
+          <h2>欢迎回来</h2>
+          <p>登录你的 AI 智能体控制台</p>
+        </div>
+
+        <form class="login-form" id="loginForm" novalidate>
+          <div class="field">
+            <label for="username">账号</label>
+            <div class="input-wrap">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              <input id="username" name="username" type="text" autocomplete="username" placeholder="请输入账号" value="admin">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="password">密码</label>
+            <div class="input-wrap">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <input id="password" name="password" type="password" autocomplete="current-password" placeholder="请输入密码" value="admin">
+              <button class="password-toggle" id="passwordToggle" type="button" aria-label="显示密码">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-options">
+            <label class="remember">
+              <input id="remember" type="checkbox" checked>
+              <span>保持登录 7 天</span>
+            </label>
+            <a class="forgot-link" href="javascript:void(0)">忘记密码？</a>
+          </div>
+
+          <div id="message" class="message" role="alert"></div>
+
+          <button class="submit-btn" id="submitBtn" type="submit">登 录</button>
+        </form>
+
+        <div class="default-hint" id="defaultHint">
+          默认账号：<code>admin</code>，默认密码：<code>admin</code>
+        </div>
+
+        <div class="success-state" id="successState">
+          <div class="success-icon">✓</div>
+          <h2>登录成功</h2>
+          <p id="successText">欢迎回来，admin。已为你保存登录状态。</p>
+          <a class="submit-btn" href="./index.html">进入控制台</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const DEFAULT_ACCOUNT = { username: "admin", password: "admin" };
+      const SESSION_COOKIE = "ai_agent_session";
+      const USER_COOKIE = "ai_agent_user";
+      const REMEMBER_DAYS = 7;
+      const REDIRECT_URL = "./index.html";
+
+      const form = document.getElementById("loginForm");
+      const usernameInput = document.getElementById("username");
+      const passwordInput = document.getElementById("password");
+      const passwordToggle = document.getElementById("passwordToggle");
+      const rememberInput = document.getElementById("remember");
+      const submitBtn = document.getElementById("submitBtn");
+      const message = document.getElementById("message");
+      const formHeading = document.getElementById("formHeading");
+      const defaultHint = document.getElementById("defaultHint");
+      const successState = document.getElementById("successState");
+      const successText = document.getElementById("successText");
+
+      function getCookie(name) {
+        const prefix = name + "=";
+        const cookies = document.cookie ? document.cookie.split(";") : [];
+        for (let raw of cookies) {
+          const cookie = raw.trim();
+          if (cookie.indexOf(prefix) === 0) {
+            return decodeURIComponent(cookie.slice(prefix.length));
+          }
+        }
+        return "";
+      }
+
+      function setCookie(name, value, days) {
+        const parts = [name + "=" + encodeURIComponent(value), "path=/", "SameSite=Lax"];
+        if (days) {
+          const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+          parts.push("expires=" + expires);
+        }
+        document.cookie = parts.join("; ");
+      }
+
+      function buildSessionToken(username) {
+        return btoa(username + ":" + Date.now());
+      }
+
+      function showMessage(text, type) {
+        message.textContent = text;
+        message.className = "message " + type;
+      }
+
+      function clearMessage() {
+        message.textContent = "";
+        message.className = "message";
+      }
+
+      function renderLoggedIn(username) {
+        form.classList.add("is-hidden");
+        formHeading.classList.add("is-hidden");
+        defaultHint.classList.add("is-hidden");
+        successState.classList.add("is-visible");
+        successText.textContent = "欢迎回来，" + username + "。已为你保存登录状态。";
+        setTimeout(() => {
+          window.location.href = REDIRECT_URL;
+        }, 900);
+      }
+
+      function handleLogin() {
+        clearMessage();
+
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!username || !password) {
+          showMessage("请输入账号和密码。", "error");
+          form.classList.add("shake");
+          setTimeout(() => form.classList.remove("shake"), 360);
+          return;
+        }
+
+        if (username !== DEFAULT_ACCOUNT.username || password !== DEFAULT_ACCOUNT.password) {
+          showMessage("账号或密码错误，请使用默认账号 admin / admin。", "error");
+          form.classList.add("shake");
+          setTimeout(() => form.classList.remove("shake"), 360);
+          return;
+        }
+
+        const persistDays = rememberInput.checked ? REMEMBER_DAYS : 0;
+        setCookie(SESSION_COOKIE, buildSessionToken(username), persistDays);
+        setCookie(USER_COOKIE, username, persistDays);
+        renderLoggedIn(username);
+      }
+
+      passwordToggle.addEventListener("click", function () {
+        const willShow = passwordInput.type === "password";
+        passwordInput.type = willShow ? "text" : "password";
+        passwordToggle.setAttribute("aria-label", willShow ? "隐藏密码" : "显示密码");
+      });
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        handleLogin();
+      });
+
+      const savedUser = getCookie(USER_COOKIE);
+      if (getCookie(SESSION_COOKIE) && savedUser) {
+        renderLoggedIn(savedUser);
+      }
+    })();
+  </script>
+</body>
+</html>

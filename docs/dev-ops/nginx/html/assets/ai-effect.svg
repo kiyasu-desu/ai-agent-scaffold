@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 720" role="img" aria-labelledby="title desc">
+  <title id="title">AI 智能体效果图</title>
+  <desc id="desc">由发光节点和神经网络组成的抽象人工智能视觉</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1c3f"/>
+      <stop offset="0.55" stop-color="#102552"/>
+      <stop offset="1" stop-color="#071126"/>
+    </linearGradient>
+
+    <radialGradient id="orb" cx="0.38" cy="0.3" r="0.85">
+      <stop offset="0" stop-color="#8ee7ff"/>
+      <stop offset="0.22" stop-color="#4fc3ff"/>
+      <stop offset="0.58" stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#12265f"/>
+    </radialGradient>
+
+    <radialGradient id="orbGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7dd3fc" stop-opacity="0.55"/>
+      <stop offset="0.55" stop-color="#2563eb" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#0b1c3f" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#60a5fa" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#7dd3fc" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#a78bfa" stop-opacity="0"/>
+    </linearGradient>
+
+    <filter id="softGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="strongGlow" x="-120%" y="-120%" width="340%" height="340%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="900" height="720" fill="url(#bg)"/>
+
+  <g opacity="0.28">
+    <path d="M0 610 Q180 520 360 588 T720 560 T900 600" fill="none" stroke="#60a5fa" stroke-width="2"/>
+    <path d="M0 655 Q240 565 460 622 T900 650" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+    <path d="M90 0 Q180 120 320 96 T620 140 T900 84" fill="none" stroke="#38bdf8" stroke-width="1.2" opacity="0.7"/>
+  </g>
+
+  <g stroke="url(#line)" stroke-width="1.6" fill="none" opacity="0.7">
+    <path d="M212 316 C330 256 470 244 570 318"/>
+    <path d="M268 398 C350 424 452 430 546 360"/>
+    <path d="M238 236 C340 150 496 140 632 206"/>
+    <path d="M292 490 C400 556 536 538 656 434"/>
+    <path d="M176 428 C286 492 414 484 536 406"/>
+    <path d="M152 192 C250 220 326 176 402 126"/>
+    <path d="M660 246 C716 310 704 398 634 442"/>
+  </g>
+
+  <circle cx="450" cy="340" r="252" fill="url(#orbGlow)" opacity="0.8">
+    <animate attributeName="opacity" values="0.55;0.85;0.55" dur="6s" repeatCount="indefinite"/>
+  </circle>
+
+  <circle cx="450" cy="340" r="132" fill="url(#orb)" filter="url(#strongGlow)">
+    <animate attributeName="r" values="124;138;124" dur="5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="450" cy="340" r="94" fill="#071a3b" opacity="0.48"/>
+  <circle cx="450" cy="340" r="54" fill="none" stroke="#93c5fd" stroke-width="2" opacity="0.8"/>
+  <circle cx="450" cy="340" r="78" fill="none" stroke="#60a5fa" stroke-width="1" stroke-dasharray="5 12" opacity="0.55">
+    <animateTransform attributeName="transform" type="rotate" from="0 450 340" to="360 450 340" dur="18s" repeatCount="indefinite"/>
+  </circle>
+
+  <g fill="#dbeafe">
+    <circle cx="212" cy="316" r="6" fill="#7dd3fc" filter="url(#softGlow)">
+      <animate attributeName="r" values="5;8;5" dur="3.4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="268" cy="398" r="5"/>
+    <circle cx="238" cy="236" r="7" fill="#a5b4fc">
+      <animate attributeName="opacity" values="0.45;1;0.45" dur="4.2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="292" cy="490" r="6"/>
+    <circle cx="176" cy="428" r="5" fill="#67e8f9"/>
+    <circle cx="152" cy="192" r="5"/>
+    <circle cx="660" cy="246" r="7" fill="#c4b5fd"/>
+    <circle cx="402" cy="126" r="5"/>
+    <circle cx="656" cy="434" r="6"/>
+    <circle cx="536" cy="406" r="5"/>
+  </g>
+
+  <g fill="none" stroke="#93c5fd" stroke-width="1.4" opacity="0.65">
+    <circle cx="450" cy="340" r="196">
+      <animateTransform attributeName="transform" type="rotate" from="0 450 340" to="360 450 340" dur="42s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="450" cy="340" r="222">
+      <animateTransform attributeName="transform" type="rotate" from="360 450 340" to="0 450 340" dur="34s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <g fill="#ffffff" font-family="Arial, sans-serif" opacity="0.86">
+    <text x="450" y="338" text-anchor="middle" font-size="26" font-weight="700" letter-spacing="2">AI</text>
+    <text x="450" y="366" text-anchor="middle" font-size="13" letter-spacing="3" fill="#a7c7ff">AGENT</text>
+  </g>
+</svg>
