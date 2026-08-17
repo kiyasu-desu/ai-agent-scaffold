@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AI 智能体 · 登录</title>
+    <style>
+        :root {
+            --primary: #4f7cff;
+            --primary-2: #7c5cff;
+            --accent: #22d3ee;
+            --bg: #070b18;
+            --panel: rgba(255, 255, 255, 0.04);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --text: #e8ecf8;
+            --text-dim: #8b93ab;
+            --danger: #ff5c7a;
+            --success: #34d399;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        .login-wrap {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* ============ 左侧：AI 展示区 ============ */
+        .brand-side {
+            position: relative;
+            flex: 1.2;
+            min-width: 480px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 64px 72px;
+            overflow: hidden;
+            background:
+                radial-gradient(1200px 600px at 20% 30%, rgba(79, 124, 255, 0.16), transparent 60%),
+                radial-gradient(900px 500px at 80% 80%, rgba(124, 92, 255, 0.14), transparent 60%),
+                linear-gradient(160deg, #0a1024 0%, #070b18 100%);
+        }
+
+        #ai-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: auto;
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 2;
+            max-width: 560px;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .brand-logo .logo-badge {
+            width: 46px;
+            height: 46px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            box-shadow: 0 8px 28px rgba(79, 124, 255, 0.45);
+        }
+
+        .brand-logo .logo-badge svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .brand-logo .logo-name {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .brand-logo .logo-name span {
+            background: linear-gradient(90deg, var(--accent), #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .brand-title {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 18px;
+            letter-spacing: 1px;
+        }
+
+        .brand-title em {
+            font-style: normal;
+            background: linear-gradient(90deg, #60a5fa, #a78bfa, #22d3ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .brand-desc {
+            font-size: 15px;
+            line-height: 1.9;
+            color: var(--text-dim);
+            margin-bottom: 42px;
+            max-width: 460px;
+        }
+
+        .brand-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            border-radius: 14px;
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            backdrop-filter: blur(8px);
+            transition: transform .25s ease, border-color .25s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-3px);
+            border-color: rgba(79, 124, 255, 0.45);
+        }
+
+        .feature-icon {
+            flex: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: rgba(79, 124, 255, 0.15);
+            color: #7ea2ff;
+        }
+
+        .feature-icon svg {
+            width: 19px;
+            height: 19px;
+        }
+
+        .feature-text h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .feature-text p {
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        .brand-stats {
+            display: flex;
+            gap: 40px;
+        }
+
+        .brand-stats .stat b {
+            display: block;
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #60a5fa, #22d3ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .brand-stats .stat span {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        /* ============ 右侧：登录区 ============ */
+        .form-side {
+            flex: 1;
+            min-width: 420px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0b101f;
+            position: relative;
+        }
+
+        .form-side::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(600px 400px at 70% 20%, rgba(34, 211, 238, 0.06), transparent 60%);
+            pointer-events: none;
+        }
+
+        .login-card {
+            position: relative;
+            width: 380px;
+            z-index: 2;
+        }
+
+        .login-card h2 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .login-card .sub {
+            font-size: 14px;
+            color: var(--text-dim);
+            margin-bottom: 36px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        .input-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 0 14px;
+            height: 48px;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .input-box:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.18);
+        }
+
+        .input-box svg {
+            flex: none;
+            width: 18px;
+            height: 18px;
+            color: #5b647a;
+        }
+
+        .input-box input {
+            flex: 1;
+            min-width: 0;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .input-box input::placeholder {
+            color: #4a5268;
+        }
+
+        .input-box .toggle-pwd {
+            flex: none;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #5b647a;
+            display: grid;
+            place-items: center;
+            padding: 4px;
+        }
+
+        .input-box .toggle-pwd:hover {
+            color: var(--text-dim);
+        }
+
+        .input-box .toggle-pwd svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .form-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .remember input {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 1px solid #4a5268;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            transition: all .2s ease;
+        }
+
+        .remember input:checked {
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            border-color: transparent;
+        }
+
+        .remember input:checked::after {
+            content: "";
+            position: absolute;
+            left: 5px;
+            top: 1px;
+            width: 4px;
+            height: 9px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .form-options a {
+            color: #7ea2ff;
+            text-decoration: none;
+        }
+
+        .form-options a:hover {
+            text-decoration: underline;
+        }
+
+        .error-tip {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--danger);
+            background: rgba(255, 92, 122, 0.1);
+            border: 1px solid rgba(255, 92, 122, 0.3);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+        }
+
+        .error-tip.show {
+            display: flex;
+        }
+
+        .btn-login {
+            width: 100%;
+            height: 48px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            box-shadow: 0 10px 26px rgba(79, 124, 255, 0.35);
+            transition: transform .15s ease, box-shadow .2s ease, opacity .2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 32px rgba(79, 124, 255, 0.5);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .demo-hint {
+            margin-top: 26px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px dashed rgba(79, 124, 255, 0.4);
+            background: rgba(79, 124, 255, 0.06);
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        .demo-hint code {
+            color: #7ea2ff;
+            background: rgba(79, 124, 255, 0.12);
+            padding: 2px 7px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: Consolas, monospace;
+        }
+
+        .demo-hint code:hover {
+            background: rgba(79, 124, 255, 0.25);
+        }
+
+        .footer-note {
+            position: absolute;
+            bottom: 26px;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            color: #3d4457;
+            z-index: 2;
+        }
+
+        /* 登录成功提示 */
+        .success-tip {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--success);
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+        }
+
+        .success-tip.show {
+            display: flex;
+        }
+
+        /* ============ 响应式 ============ */
+        @media (max-width: 1024px) {
+            .brand-side {
+                display: none;
+            }
+            .form-side {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="login-wrap">
+    <!-- ================= 左侧：AI 展示区 ================= -->
+    <section class="brand-side">
+        <canvas id="ai-canvas"></canvas>
+        <div class="brand-content">
+            <div class="brand-logo">
+                <div class="logo-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="5" y="7" width="14" height="12" rx="3"/>
+                        <circle cx="12" cy="13" r="2.6" fill="#fff" stroke="none"/>
+                        <path d="M12 7V4.5M12 21.5V19M8.4 8.4 6.8 6.8M15.6 8.4l1.6-1.6M8.4 17.6l-1.6 1.6M15.6 17.6l1.6 1.6"/>
+                        <circle cx="12" cy="13" r="6" opacity="0.35"/>
+                    </svg>
+                </div>
+                <div class="logo-name">AI <span>Agent</span> 工作台</div>
+            </div>
+
+            <h1 class="brand-title">你的专属<br/><em>AI 智能体</em>服务平台</h1>
+            <p class="brand-desc">
+                多模型编排 · 工具调用 · 记忆上下文 · 工作流引擎。
+                让每一位开发者都能快速构建、调度并沉淀属于自己的智能体。
+            </p>
+
+            <div class="brand-features">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/>
+                            <path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>
+                        </svg>
+                    </div>
+                    <div class="feature-text">
+                        <h4>多模型编排</h4>
+                        <p>统一接入主流大模型，灵活路由调度</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18l3 3 5.7-5.7a4.5 4.5 0 0 0 6-6L14.5 12l-2.5-2.5 2.7-3.2z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-text">
+                        <h4>工具调用</h4>
+                        <p>MCP 协议接入，能力无限扩展</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12a9 9 0 1 1-9-9"/>
+                            <path d="M21 3v6h-6"/>
+                            <path d="M12 7v5l3 3"/>
+                        </svg>
+                    </div>
+                    <div class="feature-text">
+                        <h4>记忆上下文</h4>
+                        <p>会话记忆持久化，对话连贯高效</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                            <path d="M14 14h3v3h-3zM21 14h.01M21 21h.01"/>
+                        </svg>
+                    </div>
+                    <div class="feature-text">
+                        <h4>工作流引擎</h4>
+                        <p>节点编排，复杂任务自动流转</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="brand-stats">
+                <div class="stat"><b>50+</b><span>内置智能体</span></div>
+                <div class="stat"><b>99.9%</b><span>服务可用性</span></div>
+                <div class="stat"><b>24h</b><span>持续在线</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 右侧：登录区 ================= -->
+    <section class="form-side">
+        <div class="login-card">
+            <h2>欢迎回来 👋</h2>
+            <p class="sub">登录 AI 智能体工作台，开启智能之旅</p>
+
+            <div class="error-tip" id="errorTip">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M12 8v5M12 16.5h.01"/>
+                </svg>
+                <span id="errorText"></span>
+            </div>
+
+            <div class="success-tip" id="successTip">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 6L9 17l-5-5"/>
+                </svg>
+                <span id="successText">登录成功，正在跳转...</span>
+            </div>
+
+            <form id="loginForm" autocomplete="off">
+                <div class="form-group">
+                    <label for="username">账号</label>
+                    <div class="input-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/>
+                        </svg>
+                        <input type="text" id="username" name="username" placeholder="请输入账号" autocomplete="username"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <div class="input-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="10" width="16" height="11" rx="2.5"/>
+                            <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                        </svg>
+                        <input type="password" id="password" name="password" placeholder="请输入密码" autocomplete="current-password"/>
+                        <button type="button" class="toggle-pwd" id="togglePwd" title="显示/隐藏密码">
+                            <svg id="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/>
+                                <circle cx="12" cy="12" r="2.8"/>
+                            </svg>
+                            <svg id="eyeClosed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                                <path d="M3 3l18 18"/>
+                                <path d="M10.6 5.1A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a17.8 17.8 0 0 1-3.2 4.2M6.6 6.6C3.7 8.3 2 12 2 12s3.5 7 10 7a10.3 10.3 0 0 0 4.6-1.1"/>
+                                <path d="M9.9 9.9a2.9 2.9 0 0 0 4.2 4.2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember">
+                        <input type="checkbox" id="remember" checked/>
+                        记住我（7 天内免登录）
+                    </label>
+                    <a href="javascript:void(0)" id="forgotLink">忘记密码？</a>
+                </div>
+
+                <button type="submit" class="btn-login" id="btnLogin">
+                    <span id="btnText">登 录</span>
+                </button>
+            </form>
+
+            <div class="demo-hint">
+                演示账号：<code id="fillAdmin">admin</code> / <code id="fillPwd">admin</code>
+                <br/>点击账号可自动填入，登录成功后写入 Cookie。
+            </div>
+        </div>
+        <div class="footer-note">© 2026 AI Agent Scaffold · Powered by DeepSeek</div>
+    </section>
+</div>
+
+<script src="./config.js"></script>
+<script>
+    (function () {
+        'use strict';
+
+        /* ================= Canvas：AI 神经网络粒子效果 ================= */
+        const canvas = document.getElementById('ai-canvas');
+        const ctx = canvas.getContext('2d');
+        const brandSide = canvas.parentElement;
+        let particles = [];
+        let width, height, rafId;
+
+        const MOUSE = { x: -9999, y: -9999 };
+
+        function resize() {
+            width = canvas.width = brandSide.clientWidth;
+            height = canvas.height = brandSide.clientHeight;
+            const count = Math.min(90, Math.floor((width * height) / 16000));
+            particles = Array.from({ length: count }, () => ({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.45,
+                vy: (Math.random() - 0.5) * 0.45,
+                r: Math.random() * 1.8 + 0.8
+            }));
+        }
+
+        function drawCore(time) {
+            // 中心 AI 核心：旋转光环
+            const cx = width * 0.28, cy = height * 0.52;
+            const pulse = 1 + Math.sin(time / 900) * 0.08;
+
+            const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 130 * pulse);
+            glow.addColorStop(0, 'rgba(96, 165, 250, 0.35)');
+            glow.addColorStop(0.5, 'rgba(124, 92, 255, 0.12)');
+            glow.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = glow;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 130 * pulse, 0, Math.PI * 2);
+            ctx.fill();
+
+            for (let i = 0; i < 3; i++) {
+                const radius = 46 + i * 26;
+                const rot = time / (1400 + i * 500) + i * 2.1;
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(rot);
+                ctx.strokeStyle = ['rgba(96,165,250,0.5)', 'rgba(167,139,250,0.45)', 'rgba(34,211,238,0.4)'][i];
+                ctx.lineWidth = 1.4;
+                ctx.setLineDash([30, 18]);
+                ctx.beginPath();
+                ctx.arc(0, 0, radius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                // 环上亮点
+                const dot = { x: Math.cos(-rot) * radius, y: Math.sin(-rot) * radius };
+                ctx.fillStyle = '#a5b4fc';
+                ctx.beginPath();
+                ctx.arc(dot.x, dot.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function tick(time) {
+            ctx.clearRect(0, 0, width, height);
+
+            drawCore(time || 0);
+
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0 || p.x > width) p.vx *= -1;
+                if (p.y < 0 || p.y > height) p.vy *= -1;
+            });
+
+            // 连线
+            const linkDist = 130;
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const a = particles[i], b = particles[j];
+                    const dx = a.x - b.x, dy = a.y - b.y;
+                    const d = Math.sqrt(dx * dx + dy * dy);
+                    if (d < linkDist) {
+                        ctx.strokeStyle = 'rgba(96, 165, 250, ' + (0.16 * (1 - d / linkDist)) + ')';
+                        ctx.lineWidth = 0.8;
+                        ctx.beginPath();
+                        ctx.moveTo(a.x, a.y);
+                        ctx.lineTo(b.x, b.y);
+                        ctx.stroke();
+                    }
+                }
+                // 鼠标连线
+                const p = particles[i];
+                const mdx = p.x - MOUSE.x, mdy = p.y - MOUSE.y;
+                const md = Math.sqrt(mdx * mdx + mdy * mdy);
+                if (md < 170) {
+                    ctx.strokeStyle = 'rgba(34, 211, 238, ' + (0.35 * (1 - md / 170)) + ')';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(MOUSE.x, MOUSE.y);
+                    ctx.stroke();
+                }
+            }
+
+            // 粒子
+            particles.forEach(p => {
+                ctx.fillStyle = 'rgba(147, 197, 253, 0.75)';
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            rafId = requestAnimationFrame(tick);
+        }
+
+        canvas.addEventListener('mousemove', e => {
+            const rect = canvas.getBoundingClientRect();
+            MOUSE.x = e.clientX - rect.left;
+            MOUSE.y = e.clientY - rect.top;
+        });
+        canvas.addEventListener('mouseleave', () => {
+            MOUSE.x = MOUSE.y = -9999;
+        });
+
+        window.addEventListener('resize', resize);
+        resize();
+        rafId = requestAnimationFrame(tick);
+
+        /* ================= 登录逻辑 ================= */
+        const USERNAME = 'admin';
+        const PASSWORD = 'admin';
+        // Cookie 名称与页面路由优先读取 config.js，未加载时使用默认值
+        const CFG = window.AI_AGENT_CONFIG || {};
+        const COOKIE_TOKEN = (CFG.COOKIE && CFG.COOKIE.TOKEN) || 'ai_agent_token';
+        const COOKIE_USER = (CFG.COOKIE && CFG.COOKIE.USER) || 'ai_agent_user';
+        const INDEX_PAGE = (CFG.PAGES && CFG.PAGES.INDEX) || './index.html';
+
+        const form = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const rememberInput = document.getElementById('remember');
+        const btnLogin = document.getElementById('btnLogin');
+        const btnText = document.getElementById('btnText');
+        const errorTip = document.getElementById('errorTip');
+        const errorText = document.getElementById('errorText');
+        const successTip = document.getElementById('successTip');
+        const togglePwd = document.getElementById('togglePwd');
+        const eyeOpen = document.getElementById('eyeOpen');
+        const eyeClosed = document.getElementById('eyeClosed');
+
+        function showError(msg) {
+            errorText.textContent = msg;
+            errorTip.classList.add('show');
+            successTip.classList.remove('show');
+        }
+
+        function hideError() {
+            errorTip.classList.remove('show');
+        }
+
+        function setCookie(name, value, days) {
+            let cookie = name + '=' + encodeURIComponent(value) + ';path=/';
+            if (days) {
+                const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+                cookie += ';expires=' + expires;
+            }
+            cookie += ';SameSite=Lax';
+            document.cookie = cookie;
+        }
+
+        function buildToken(username) {
+            // 简单令牌：base64(账号:时间戳)，真实项目应替换为服务端签发的 JWT
+            const payload = username + ':' + Date.now() + ':' + Math.random().toString(36).slice(2);
+            return btoa(unescape(encodeURIComponent(payload)));
+        }
+
+        function saveLoginCookie(username) {
+            const days = rememberInput.checked ? 7 : 0;
+            setCookie(COOKIE_TOKEN, buildToken(username), days);
+            setCookie(COOKIE_USER, username, days);
+        }
+
+        function doLogin() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!username) {
+                showError('请输入账号');
+                usernameInput.focus();
+                return;
+            }
+            if (!password) {
+                showError('请输入密码');
+                passwordInput.focus();
+                return;
+            }
+
+            // 模拟请求耗时
+            btnLogin.disabled = true;
+            btnText.style.display = 'none';
+            btnLogin.insertAdjacentHTML('afterbegin', '<span class="spinner" id="spinner"></span>');
+
+            setTimeout(function () {
+                const spinner = document.getElementById('spinner');
+                if (spinner) spinner.remove();
+                btnText.style.display = '';
+                btnLogin.disabled = false;
+
+                if (username === USERNAME && password === PASSWORD) {
+                    // 1. 保存 Cookie
+                    saveLoginCookie(username);
+                    hideError();
+                    successTip.classList.add('show');
+
+                    // 2. 跳转首页（若不存在则停留在成功状态）
+                    fetch(INDEX_PAGE, { method: 'HEAD' })
+                        .then(function (res) {
+                            if (res.ok) {
+                                window.location.href = INDEX_PAGE;
+                            }
+                        })
+                        .catch(function () { /* 首页不存在，停留展示成功提示 */ });
+                } else {
+                    showError('账号或密码错误，请重试（默认 admin / admin）');
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            }, 700);
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            doLogin();
+        });
+
+        [usernameInput, passwordInput].forEach(function (el) {
+            el.addEventListener('input', hideError);
+        });
+
+        // 密码可见性切换
+        togglePwd.addEventListener('click', function () {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            eyeOpen.style.display = isPassword ? 'none' : '';
+            eyeClosed.style.display = isPassword ? '' : 'none';
+        });
+
+        // 点击演示账号自动填入
+        document.getElementById('fillAdmin').addEventListener('click', function () {
+            usernameInput.value = USERNAME;
+            hideError();
+            usernameInput.focus();
+        });
+        document.getElementById('fillPwd').addEventListener('click', function () {
+            passwordInput.value = PASSWORD;
+            hideError();
+            passwordInput.focus();
+        });
+
+        // 忘记密码（演示提示）
+        document.getElementById('forgotLink').addEventListener('click', function () {
+            showError('演示环境：默认账号 admin / admin，无需找回');
+        });
+
+        // 若 Cookie 中已有登录态，预填账号
+        (function prefillFromCookie() {
+            var savedUser = '';
+            var m = document.cookie.match(new RegExp('(?:^|;\\s*)' + COOKIE_USER + '=([^;]*)'));
+            if (m) {
+                try {
+                    savedUser = decodeURIComponent(m[1]);
+                } catch (e) {
+                    savedUser = m[1];
+                }
+            }
+            if (savedUser) usernameInput.value = savedUser;
+        })();
+
+        // 页面卸载时释放动画
+        window.addEventListener('beforeunload', function () {
+            if (rafId) cancelAnimationFrame(rafId);
+        });
+    })();
+</script>
+</body>
+</html>
