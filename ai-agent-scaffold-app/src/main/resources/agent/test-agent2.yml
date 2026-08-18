@@ -24,6 +24,9 @@ ai:
                     request-timeout: 5000
                 - local:
                     name: myToolCallbackProvider
+              tool-skills-list:
+                - type: resource
+                  path: agent/skills
             agents:
               - name: testAgent
                 description: 信息搜索与大小写转化

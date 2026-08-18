@@ -49,6 +49,8 @@ public class AiAgentConfigTableVO {
 
             private List<ToolMcp> toolMcpList;
 
+            private List<ToolSkills> toolSkillsList;
+
             @Data
             public static class ToolMcp {
 
@@ -86,6 +88,14 @@ public class AiAgentConfigTableVO {
                 }
             }
 
+            @Data
+            public static class ToolSkills {
+
+                private String type = "directory";
+                private String path;
+
+            }
+
 
         }
 
@@ -107,7 +117,7 @@ public class AiAgentConfigTableVO {
         }
 
         @Data
-        public static class Runner{
+        public static class Runner {
             private String agentName;
             private List<String> pluginNameList;
         }
