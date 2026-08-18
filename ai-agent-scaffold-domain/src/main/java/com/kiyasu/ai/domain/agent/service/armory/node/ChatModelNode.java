@@ -8,6 +8,7 @@ import com.kiyasu.ai.domain.agent.service.armory.AbstractArmorySupport;
 import com.kiyasu.ai.domain.agent.service.armory.factory.DefaultArmoryFactory;
 import com.kiyasu.ai.domain.agent.service.armory.matter.mcp.client.ToolMcpCreateService;
 import com.kiyasu.ai.domain.agent.service.armory.matter.mcp.client.factory.DefaultMcpClientFactory;
+import com.kiyasu.ai.domain.agent.service.armory.matter.skills.ToolSkillsCreateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -30,6 +31,9 @@ public class ChatModelNode extends AbstractArmorySupport {
     @Resource
     private DefaultMcpClientFactory defaultMcpClientFactory;
 
+    @Resource
+    private ToolSkillsCreateService toolSkillsCreateService;
+
     @Override
     protected AiAgentRegisterVO doApply(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
 
@@ -42,14 +46,23 @@ public class ChatModelNode extends AbstractArmorySupport {
         AiAgentConfigTableVO aiAgentConfigTableVO = requestParameter.getAiAgentConfigTableVO();
         AiAgentConfigTableVO.Module.ChatModel chatModelConfig = aiAgentConfigTableVO.getModule().getChatModel();
         List<AiAgentConfigTableVO.Module.ChatModel.ToolMcp> toolMcpList = chatModelConfig.getToolMcpList();
+        List<AiAgentConfigTableVO.Module.ChatModel.ToolSkills> toolSkillsList = chatModelConfig.getToolSkillsList();
 
-        // 构建 mcp 服务（工厂）
-
+        // 构建 mcp/skills 服务（工厂）
         List<ToolCallback> toolCallbackList = new ArrayList<>();
-        for (AiAgentConfigTableVO.Module.ChatModel.ToolMcp toolMcp : toolMcpList) {
-            ToolMcpCreateService toolMcpCreateService = defaultMcpClientFactory.getToolMcpCreateService(toolMcp);
-            ToolCallback[] toolCallbacks = toolMcpCreateService.buildToolCallback(toolMcp);
-            toolCallbackList.addAll(List.of(toolCallbacks));
+        if (null != toolMcpList && !toolMcpList.isEmpty()) {
+            for (AiAgentConfigTableVO.Module.ChatModel.ToolMcp toolMcp : toolMcpList) {
+                ToolMcpCreateService toolMcpCreateService = defaultMcpClientFactory.getToolMcpCreateService(toolMcp);
+                ToolCallback[] toolCallbacks = toolMcpCreateService.buildToolCallback(toolMcp);
+                toolCallbackList.addAll(List.of(toolCallbacks));
+            }
+        }
+
+        if (null != toolSkillsList && !toolSkillsList.isEmpty()) {
+            for (AiAgentConfigTableVO.Module.ChatModel.ToolSkills toolSkills : toolSkillsList) {
+                ToolCallback[] toolCallbacks = toolSkillsCreateService.buildToolCallback(toolSkills);
+                toolCallbackList.addAll(List.of(toolCallbacks));
+            }
         }
 
         // 构建对话模型
