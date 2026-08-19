@@ -16,6 +16,7 @@ thread:
 spring:
   config:
     import:
+      - optional:classpath:secret.yml
       - classpath:agent/test-agent.yml
       - classpath:agent/weather-agent.yml
       - classpath:agent/parallel_research_app.yml

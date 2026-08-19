@@ -112,7 +112,7 @@ public class AiAgentAutoConfigTest {
 
     @Test
     public void getEnv_Test() {
-        System.out.println(System.getenv("AI_AGENT_SCAFFOLD_MIMO_API_KEY"));
+        System.out.println(System.getenv("MIMO_API_KEY"));
     }
 
 }

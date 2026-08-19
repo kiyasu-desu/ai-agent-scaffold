@@ -11,7 +11,7 @@ ai:
           module:
             ai-api:
               base-url: https://api.xiaomimimo.com
-              api-key: ${AI_AGENT_SCAFFOLD_MIMO_API_KEY}
+              api-key: ${MIMO_API_KEY}
               completions-path: v1/chat/completions
               embeddings-path: v1/embeddings
             chat-model:
@@ -20,7 +20,7 @@ ai:
                 - sse:
                     name: baidu-search
                     base-uri: https://appbuilder.baidu.com/v2/ai_search/mcp/
-                    sse-endpoint: sse?api_key=YOUR_BAIDU_MCP_API_KEY
+                    sse-endpoint: sse?api_key=${BAIDU_MCP_API_KEY}
                     request-timeout: 5000
                 - local:
                     name: myToolCallbackProvider

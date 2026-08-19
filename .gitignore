@@ -41,3 +41,5 @@ build/
 /.idea/
 /.mvn/
 /ai-agent-scaffold-app/data/
+/ai-agent-scaffold-app/src/main/resources/secret.yml
+/ai-agent-scaffold-app/src/main/resources/secret.yml

@@ -29,7 +29,7 @@ public class LangChain4jToolTest {
     public static void main(String[] args) {
         OpenAiChatModel model = OpenAiChatModel.builder()
                 .baseUrl("https://api.deepseek.com")
-                .apiKey("sk-YOUR_DEEPSEEK_API_KEY")
+                .apiKey(System.getenv("DEEPSEEK_API_KEY"))
                 .modelName("deepseek-v4-flash")
                 .build();
 
@@ -51,7 +51,7 @@ public class LangChain4jToolTest {
 
         // 自己申请 api_key
         HttpClientSseClientTransport sseClientTransport = HttpClientSseClientTransport.builder("http://appbuilder.baidu.com/v2/ai_search/mcp/")
-                .sseEndpoint("sse?api_key=YOUR_BAIDU_MCP_API_KEY")
+                .sseEndpoint("sse?api_key=" + System.getenv("BAIDU_MCP_API_KEY"))
                 .build();
 
         McpSyncClient mcpSyncClient = McpClient.sync(sseClientTransport).requestTimeout(Duration.ofMinutes(360)).build();

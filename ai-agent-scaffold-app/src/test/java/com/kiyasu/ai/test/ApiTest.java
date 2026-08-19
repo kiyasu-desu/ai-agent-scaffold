@@ -34,7 +34,7 @@ public class ApiTest {
 
         OpenAiApi openAiApi = OpenAiApi.builder()
                 .baseUrl("https://api.xiaomimimo.com")
-                .apiKey(System.getenv("AI_AGENT_SCAFFOLD_MIMO_API_KEY"))
+                .apiKey(System.getenv("MIMO_API_KEY"))
                 .completionsPath("v1/chat/completions")
                 .embeddingsPath("v1/embeddings")
                 .build();

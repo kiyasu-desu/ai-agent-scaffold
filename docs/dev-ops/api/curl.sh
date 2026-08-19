@@ -1,6 +1,6 @@
 curl https://api.deepseek.com/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-YOUR_DEEPSEEK_API_KEY" \
+  -H "Authorization: Bearer ${DEEPSEEK_API_KEY:-YOUR_DEEPSEEK_API_KEY}" \
   -d '{
         "model": "deepseek-v4-flash",
         "messages": [

@@ -18,7 +18,7 @@ public class SpringAiApiTest {
     public static void main(String[] args) {
         OpenAiApi openAiApi = OpenAiApi.builder()
                 .baseUrl("https://api.deepseek.com")
-                .apiKey("sk-YOUR_DEEPSEEK_API_KEY")
+                .apiKey(System.getenv("DEEPSEEK_API_KEY"))
                 .build();
 
         ChatModel chatModel = OpenAiChatModel.builder()

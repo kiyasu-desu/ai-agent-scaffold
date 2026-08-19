@@ -27,7 +27,7 @@ public class SpringAiToolTest {
     public static void main(String[] args) {
         OpenAiApi openAiApi = OpenAiApi.builder()
                 .baseUrl("https://api.deepseek.com")
-                .apiKey("sk-YOUR_DEEPSEEK_API_KEY")
+                .apiKey(System.getenv("DEEPSEEK_API_KEY"))
                 .build();
 
         ChatModel chatModel = OpenAiChatModel.builder()
@@ -53,7 +53,7 @@ public class SpringAiToolTest {
 
         // 自己申请 api_key
         HttpClientSseClientTransport sseClientTransport = HttpClientSseClientTransport.builder("http://appbuilder.baidu.com")
-                .sseEndpoint("/v2/ai_search/mcp/sse?api_key=YOUR_BAIDU_MCP_API_KEY")
+                .sseEndpoint("/v2/ai_search/mcp/sse?api_key=" + System.getenv("BAIDU_MCP_API_KEY"))
                 .build();
 
         McpSyncClient mcpSyncClient = McpClient.sync(sseClientTransport).requestTimeout(Duration.ofMinutes(360)).build();
@@ -66,7 +66,7 @@ public class SpringAiToolTest {
     @Test
     public void test_url() throws MalformedURLException {
 
-        String fullUrl = "http://appbuilder.baidu.com/v2/ai_search/mcp/sse?api_key=YOUR_BAIDU_MCP_API_KEY";
+        String fullUrl = "http://appbuilder.baidu.com/v2/ai_search/mcp/sse?api_key=" + System.getenv("BAIDU_MCP_API_KEY");
 
         URL url = new URL(fullUrl);
 
